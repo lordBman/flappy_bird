@@ -10,7 +10,44 @@ import 'package:flappy_bird/game/utils.dart';
 
 enum LogPosition{ top, bottom }
 
-class Log extends SpriteComponent with HasGameRef<FlappyBird>{
+class PipeBody extends SpriteGroupComponent<LogPosition>{
+    double bodyHeight, yPosition;
+    LogPosition logPosition;
+
+    PipeBody({required this.logPosition, required this.bodyHeight, required this.yPosition });
+    
+    @override
+    FutureOr<void> onLoad() async{
+        super.onLoad();
+        sprites = {
+            LogPosition.bottom: await __initBottom(),
+            LogPosition.top: await __initTop()
+        };
+        height = bodyHeight;
+        position.y = yPosition;
+        current = logPosition;
+    }
+
+    Future<Sprite> __initBottom() async{
+        Image logsImage = await Flame.images.load("pipe-green.png");
+
+        return Sprite(logsImage, srcPosition: Vector2(0, logsImage.height / 2), srcSize: Vector2(logsImage.width.toDouble(), logsImage.height/2));
+    }
+
+    Future<Sprite> __initTop() async{
+        Image logsImage = await Flame.images.load("pipe-green-rotated.png");
+
+        return Sprite(logsImage, srcPosition: Vector2(0, 0), srcSize: Vector2(logsImage.width.toDouble(), logsImage.height/2));
+    }
+
+    @override
+  void update(double dt) {
+      super.update(dt);
+      position.y = yPosition;
+  }
+}
+
+class Log extends SpriteGroupComponent with HasGameRef<FlappyBird>{
     LogPosition logPosition;
     double logHeight;
 
@@ -18,22 +55,34 @@ class Log extends SpriteComponent with HasGameRef<FlappyBird>{
 
     @override
     FutureOr<void> onLoad() async {
+        sprites = {
+            LogPosition.bottom: await __initBottom(),
+            LogPosition.top: await __initTop()
+        };
+
+        addAll([RectangleHitbox()]);
+    }
+    
+    Future<Sprite> __initBottom() async{
         Image logsImage = await Flame.images.load("pipe-green.png");
 
-        sprite = Sprite(logsImage);
-        height = logHeight;
-        switch(logPosition){
-            case LogPosition.bottom:
-                position.y = gameRef.size.y - logHeight - Utils.groundHeight;
-                break;
-            case LogPosition.top:
-                position.y = logHeight;
-                position.x += width;
-                angle = radians(180);
-                break;
-        }
+        Sprite sprite = Sprite(logsImage);
+        position.y = gameRef.size.y - logHeight - Utils.groundHeight;
 
-        add(RectangleHitbox());
+        add(PipeBody(logPosition: LogPosition.bottom, bodyHeight: logHeight - height, yPosition: position.y + height));
+
+        return sprite;
+    }
+
+    Future<Sprite> __initTop() async{
+        Image logsImage = await Flame.images.load("pipe-green-rotated.png");
+
+        Sprite sprite = Sprite(logsImage);
+
+        position.y = logHeight;
+        add(PipeBody(logPosition: LogPosition.top, bodyHeight: logHeight - height, yPosition: -height));
+
+        return sprite; 
     }
 
     @override

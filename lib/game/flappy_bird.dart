@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flame/camera.dart';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/game.dart';
@@ -17,10 +18,11 @@ class FlappyBird extends FlameGame  with KeyboardEvents, TapCallbacks, HasCollis
 
     @override
     FutureOr<void> onLoad() {
+        camera.viewport = FixedResolutionViewport(resolution: Vector2(480, 800));
         __bird = Bird();
         __score = buildScore();
 
-        addAll([ Background(), __bird, LogGroup(),  Ground(), __score ]);
+        addAll([ Background(), __bird,  Ground(), __score ]);
 
     }
 
@@ -38,9 +40,9 @@ class FlappyBird extends FlameGame  with KeyboardEvents, TapCallbacks, HasCollis
         __bird.fly();
     }
 
-    @override
+    /*@override
     void update(double dt) {
         super.update(dt);
         __score.text = 'Score: ${__bird.score}';
-    }
+    }*/
 }
