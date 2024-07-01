@@ -4,7 +4,6 @@ import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
 import 'package:flame/extensions.dart';
-import 'package:flame/flame.dart';
 import 'package:flappy_bird/game/flappy_bird.dart';
 import 'package:flappy_bird/game/utils.dart';
 import 'package:flutter/animation.dart';
@@ -12,29 +11,31 @@ import 'package:flutter/animation.dart';
 enum BirdState { flapping, falling }
 
 class Bird extends SpriteAnimationGroupComponent<BirdState> with HasGameReference<FlappyBird>, CollisionCallbacks{
-    late Image birdDownFlapImage, birdMiddleFlapImage, birdUpFlapImage;
+    late Image __birdDownFlapImage, __birdMiddleFlapImage, __birdUpFlapImage;
     int score = 0;
     late final RotateEffect rotateEffect;
 
+    Bird():super(key: ComponentKey.named('bird'),);
+
     Future<SpriteAnimation> get __flappingAnimation async {
-        final birdWingUp = Sprite(birdUpFlapImage);
-        final birdWingCenter = Sprite(birdMiddleFlapImage);
-        final birdWingDown = Sprite(birdDownFlapImage);
+        final birdWingUp = Sprite(__birdUpFlapImage);
+        final birdWingCenter = Sprite(__birdMiddleFlapImage);
+        final birdWingDown = Sprite(__birdDownFlapImage);
 
         return SpriteAnimation.spriteList([birdWingUp, birdWingCenter, birdWingDown], stepTime: 0.1, loop: true);
     }
 
     Future<SpriteAnimation> get __fallingAnimation async {
-        final birdWingCenter = Sprite(birdUpFlapImage);
+        final birdWingCenter = Sprite(__birdUpFlapImage);
 
         return SpriteAnimation.spriteList([ birdWingCenter], stepTime: 0.4);
     }
 
     @override
     FutureOr<void> onLoad() async{
-        birdUpFlapImage = await Flame.images.load("yellowbird-upflap.png");
-        birdMiddleFlapImage = await Flame.images.load("yellowbird-midflap.png");
-        birdDownFlapImage = await Flame.images.load("yellowbird-downflap.png");
+        __birdUpFlapImage = await AssetsLoader().loadImage("yellowbird-upflap.png");
+        __birdMiddleFlapImage = await AssetsLoader().loadImage("yellowbird-midflap.png");
+        __birdDownFlapImage = await AssetsLoader().loadImage("yellowbird-downflap.png");
 
         scale = Vector2.all(1.4);
         position = Vector2(60, game.size.y / 2 - scaledSize.y / 2);
@@ -55,11 +56,14 @@ class Bird extends SpriteAnimationGroupComponent<BirdState> with HasGameReferenc
     @override
     void update(double dt) {
         super.update(dt);
-        position.y += Utils.gameSpeed.y * dt;
-        if (position.y < 1) {
-            gameOver();
-        }else if(position.y >= game.size.y - scaledSize.y - Utils.groundHeight){
-            gameOver();
+        bool isGrounded = position.y >= game.size.y - scaledSize.y - Utils.groundHeight;
+        if(!isGrounded){
+            position.y += Utils.gameSpeed.y * dt;
+        }
+        if (position.y < 0) {
+            game.gameOver();
+        }else if(isGrounded && !game.isHit){
+            game.gameOver();
         }
     }
 
@@ -85,13 +89,8 @@ class Bird extends SpriteAnimationGroupComponent<BirdState> with HasGameReferenc
     @override
     void onCollisionStart(Set<Vector2> intersectionPoints, PositionComponent other) {
         super.onCollisionStart(intersectionPoints, other);
-        gameOver();
+        game.gameOver();
     }
 
-    void gameOver() {
-        //FlameAudio.play(Assets.collision);
-        //game.isHit = true;
-        //gameRef.overlays.add('gameOver');
-        game.pauseEngine();
-    }
+    void reset() => position = Vector2(60, game.size.y / 2 - scaledSize.y / 2);
 }
