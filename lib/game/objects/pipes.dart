@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/extensions.dart';
+import 'package:flame_audio/flame_audio.dart';
 import 'package:flappy_bird/game/flappy_bird.dart';
 import 'package:flappy_bird/game/objects/bird.dart';
 import 'package:flappy_bird/game/utils.dart';
@@ -108,7 +109,7 @@ class Pipes extends PositionComponent with HasGameRef<FlappyBird> {
     
     void updateScore() {
         game.findByKey<Bird>(ComponentKey.named('bird'))?.score += 1;
-        //FlameAudio.play(Assets.point);
+        FlameAudio.play("point.ogg");
     }
 
     void stop() => __running = false;
@@ -123,6 +124,7 @@ class Pipes extends PositionComponent with HasGameRef<FlappyBird> {
 
         if (position.x < - pipeImage.width) {
             removeFromParent();
+            updateScore();
         }
     }
 }

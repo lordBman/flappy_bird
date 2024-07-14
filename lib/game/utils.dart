@@ -1,15 +1,13 @@
 import 'package:flame/flame.dart';
-import 'package:flame/game.dart';
-import 'dart:math';
+import 'package:flame/extensions.dart';
 
 import 'package:flame/image_composition.dart';
 
 class Utils{
     static final gameSpeed = Vector2(180, 280);
-    static double groundHeight = 60.0;
+    static double groundHeight = 80.0, gameWorldWidth = 400, gameWorldHeight = 800;
     static const gravity = -100.0;
     static const pipeInterval = 1.5;
-    static num degToRad(num deg)=> deg * (pi / 180.0);
 }
 
 class AssetsLoader{
