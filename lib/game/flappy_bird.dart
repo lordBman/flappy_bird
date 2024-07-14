@@ -7,7 +7,6 @@ import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/game.dart';
 import 'package:flame/text.dart';
-import 'package:flame_audio/flame_audio.dart';
 
 import 'package:flappy_bird/game/objects/background.dart';
 import 'package:flappy_bird/game/objects/bird.dart';
