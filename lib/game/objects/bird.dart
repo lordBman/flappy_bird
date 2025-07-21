@@ -41,22 +41,21 @@ class Bird extends SpriteAnimationGroupComponent<BirdState> with HasGameReferenc
         __birdMiddleFlapImage = await AssetsLoader().loadImage("yellowbird-midflap.png");
         __birdDownFlapImage = await AssetsLoader().loadImage("yellowbird-downflap.png");
 
-        __wingPool = await FlameAudio.createPool("wing.ogg",minPlayers: 2, maxPlayers: 4);
-        __hitPool = await FlameAudio.createPool("hit.ogg",minPlayers: 2, maxPlayers: 4);
+        __wingPool = await FlameAudio.createPool("wing.wav",minPlayers: 2, maxPlayers: 4);
+        __hitPool = await FlameAudio.createPool("hit.wav",minPlayers: 2, maxPlayers: 4);
 
         scale = Vector2.all(1.4);
         position = Vector2(60, game.size.y / 2 - scaledSize.y / 2);
 
         add(RectangleHitbox.relative(Vector2.all(1), parentSize: scaledSize, position: position));
 
-        current = BirdState.falling;
         animations = {
             BirdState.flapping : await __flappingAnimation,
             BirdState.falling: await __fallingAnimation
         };
+        current = BirdState.falling;
 
         rotateEffect = RotateEffect.to( degrees2Radians * 23, EffectController(duration: 0.2, curve: Curves.decelerate));
-
         addAll([ CircleHitbox(), rotateEffect ]);
     }
 

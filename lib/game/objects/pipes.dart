@@ -40,7 +40,7 @@ class PipeBody extends SpriteGroupComponent<PipePosition>{
     }
 }
 
-class BottomPipe extends SpriteComponent with HasGameRef<FlappyBird>{
+class BottomPipe extends SpriteComponent with HasGameReference<FlappyBird>{
     double pipeHeight;
     Image pipeImage;
     
@@ -62,7 +62,7 @@ class BottomPipe extends SpriteComponent with HasGameRef<FlappyBird>{
   }
 }
 
-class TopPipe extends SpriteComponent with HasGameRef<FlappyBird>{
+class TopPipe extends SpriteComponent with HasGameReference<FlappyBird>{
     double pipeHeight;
     Image pipeImage;
     
@@ -85,7 +85,7 @@ class TopPipe extends SpriteComponent with HasGameRef<FlappyBird>{
     }
 }
 
-class Pipes extends PositionComponent with HasGameRef<FlappyBird> {
+class Pipes extends PositionComponent with HasGameReference<FlappyBird> {
     final _random = Random();
     final Image pipeImage, pipeImageRotated;
     bool __running = true;
@@ -97,7 +97,7 @@ class Pipes extends PositionComponent with HasGameRef<FlappyBird> {
     Future<void> onLoad() async {
         position.x = game.size.x;
 
-        final heightMinusGround = gameRef.size.y - Utils.groundHeight;
+        final heightMinusGround = game.size.y - Utils.groundHeight;
         final spacing = _random.nextInt(100) + 120;
         final centerY = 160 + _random.nextInt(350).toDouble();
         
@@ -109,7 +109,7 @@ class Pipes extends PositionComponent with HasGameRef<FlappyBird> {
     
     void updateScore() {
         game.findByKey<Bird>(ComponentKey.named('bird'))?.score += 1;
-        FlameAudio.play("point.ogg");
+        FlameAudio.play("point.wav");
     }
 
     void stop() => __running = false;
